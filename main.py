@@ -1,22 +1,22 @@
-from pydoc import pager
-from random import seed
 import pyperclip
-from unicodedata import category, name
 import requests
 from bs4 import BeautifulSoup
 from time import sleep
 from linecache import getline as gl
 import os
 
+curdir = os.getcwd()
+condir =curdir+'/configs/config.txt'
 SleepTime = 2
 MaxLinks = 20
+cboardsetting = gl(condir, 2).strip()
 
 
 def cls():                                         
     os.system('cls' if os.name=='nt' else 'clear')  
     
 def main(pagenum,oldreq):
-    
+    Domain = gl(condir, 1)
     cls()
     if len(oldreq) ==0:
         print('Please enter the text to search for\n')
@@ -25,7 +25,7 @@ def main(pagenum,oldreq):
     else:
         textinput = oldreq
     if int(pagenum) > 0:
-        BuildedReqLink = 'https://www.1377x.to/sort-search/'+textinput+'/seeders/desc/'+pagenum+'/'
+        BuildedReqLink = 'https://'+Domain+'/sort-search/'+textinput+'/seeders/desc/'+pagenum+'/'
     else:
         BuildedReqLink = 'https://www.1377x.to/sort-search/'+textinput+'/seeders/desc/1/'
     
@@ -104,10 +104,14 @@ def main(pagenum,oldreq):
     magnetlink = [x for x in magnetunfiltered if x.startswith('magnet')]
 
     cls()
-
-    pyperclip.copy(magnetlink[0])
-    print('The magnet link has been copied to your clipboard, returning to torrent chooser in ' +str(SleepTime)+ ' seconds' )
-    sleep(int(SleepTime))
+    if cboardsetting == 'True':
+        pyperclip.copy(magnetlink[0])
+        print('The magnet link has been copied to your clipboard, returning to torrent chooser in ' +str(SleepTime)+ ' seconds' )
+        sleep(int(SleepTime))
+        
+    else:
+        print('This is the magnet link: \n'+magnetlink[0]+'\n\npress enter to return to main screen' )
+        ghostedinput = input()
     cls()  
     main(0,'')  
     
