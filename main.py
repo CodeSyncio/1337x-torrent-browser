@@ -60,7 +60,7 @@ def main(pagenum,oldreq):
 
     torrentlinks = [x for x in torrentlinksunfitered if x.startswith('/torrent/')]
 
-
+    cls()
     counter = 1
     for x in range(len(namelist)):
         if counter != (int(MaxLinks) + 1):
@@ -68,7 +68,7 @@ def main(pagenum,oldreq):
             counter = counter + 1
 
     
-    chosenflwnmbr = input('choose a link:    [type "b" to choose another section, "p" for a dif page] \n')
+    chosenflwnmbr = input('\n\nchoose a link:    \n[type "b" to choose another section, "p" for a dif page] \n')
     cls()
     if chosenflwnmbr != 'b' and chosenflwnmbr != 'p':
         
