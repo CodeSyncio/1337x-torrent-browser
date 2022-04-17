@@ -1,5 +1,5 @@
 www.1337xx.to
-False
+True
 
 
 line 1 = domain used for GET requests (can use any official domain)
