@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from time import sleep
 from linecache import getline as gl
 import os
+import termcolor
 
 curdir = os.getcwd()
 condir =curdir+'/configs/config.txt'
@@ -20,9 +21,16 @@ cboardsetting = gl(condir, 2).strip()
 def cls():                                         
     os.system('cls' if os.name=='nt' else 'clear')  
     
-def main(pagenum,oldreq,oldcat):
+def main(pagenum,oldreq,oldcat,oldorder):
     Domain = gl(condir, 1).strip()
     cls()
+    
+    if len(str(pagenum)) == 0:
+        pagenum = 1
+    else:
+        pass
+    
+    
     if len(oldreq) ==0:
         print('Please enter the text to search for\n')
         textinput = input()
@@ -48,34 +56,58 @@ def main(pagenum,oldreq,oldcat):
         
         SearchCategory = oldcat
         
-    
-    if int(pagenum) > 0:  
-        if SearchCategory != 'Wild':
-            BuildedReqLink = 'https://'+str(Domain)+'/category-search/'+str(textinput)+'/'+str(SearchCategory)+'/'+str(pagenum)+'/'
-            #OLD  'https://'+Domain+'/sort-search/'+textinput+'/seeders/desc/'+pagenum+'/'
-        else:
-            BuildedReqLink = 'https://'+Domain+'/sort-search/'+textinput+'/seeders/desc/'+pagenum+'/'            
+        
+    if len(oldorder) ==0:
+        cls()
+        print('Please enter order to put torrents in\n')
+        print('[1] by Seeders')
+        print('[2] by size')
+        print('[3] by time')
+        
+        OrderNumber = input('\n')
+        Orders = ['seeders','size','time']
+        
+        SortOrder = Orders[int(OrderNumber)-1]
         
     else:
-        if SearchCategory != 'Wild':
-            BuildedReqLink = 'https://'+Domain+'/category-search/'+textinput+'/'+SearchCategory+'/1/'
-        else:
-            BuildedReqLink = 'https:/'+Domain+'/sort-search/'+textinput+'/seeders/desc/1/'
+        
+        SortOrder = oldorder
+        
+    
+        
+    
+     
+    if SearchCategory != 'Wild':
+            
+        BuildedReqLink = 'https://'+str(Domain)+'/sort-category-search/'+str(textinput)+'/'+str(SearchCategory)+'/'+str(SortOrder)+'/desc/'+str(pagenum)+'/'
+            
+        #secold BuildedReqLink = 'https://'+str(Domain)+'/category-search/'+str(textinput)+'/'+str(SearchCategory)+'/'+str(pagenum)+'/'
+        #OLD  'https://'+Domain+'/sort-search/'+textinput+'/seeders/desc/'+pagenum+'/'
+    else:
+        BuildedReqLink = 'https://'+str(Domain)+'/sort-search/'+str(textinput)+'/'+str(SortOrder)+'/'+'desc/'+str(pagenum)+'/'
+            
+                        
+        
+    
         
         
     
     
-    page = requests.get(BuildedReqLink.strip()) # Getting page HTML through request
+    page = requests.get(BuildedReqLink) # Getting page HTML through request
     
     soup = BeautifulSoup(page.content, 'html.parser') # Parsing content using beautifulsoup
     
     Names = soup.select("table tbody tr td.coll-1.name a") # Selecting all of the anchors with titles
     Seeders = soup.select("table tbody tr td.coll-2")
+    Sizes = soup.select("table tbody tr td.coll-4")
+    Dates = soup.select("table tbody tr td.coll-date")
     namelist = []
     pathlinks = []
     Seederlist = []
     torrentlinksunfitered = []
     torrentlinks = []
+    sizeslist = []
+    Datelist = []
     for anchor in Names:
         namelist.append(anchor.text)
         
@@ -87,7 +119,12 @@ def main(pagenum,oldreq,oldcat):
     
     for td in Seeders:
         Seederlist.append(td.text)
+        
+    for td in Sizes:
+        sizeslist.append(td.text)
     
+    for td in Dates:
+        Datelist.append(td.text)
 
 
 
@@ -100,29 +137,31 @@ def main(pagenum,oldreq,oldcat):
     counter = 1
     for x in range(len(namelist)):
         if counter != (int(MaxLinks) + 1):
-            print (str(counter)+ '. '+namelist[x]+' S: '+ Seederlist[x])
+            print (str(counter)+ '. '+namelist[x]),termcolor.cprint(' [Seeds: '+ Seederlist[x]+' Size: '+sizeslist[x]+ ' Upload Date: '+Datelist[x]+' ] \n', 'red')
             counter = counter + 1
-
+           
     
-    chosenflwnmbr = input('\n\nchoose a link:    \n[type "b" to choose another section, "p" for a dif page] \n')
+    
+    termcolor.cprint('\n\nchoose a link:    ','green'),termcolor.cprint('[type "b" to choose another section, "p" for a dif page] \n','cyan')
+    chosenflwnmbr = input()
     cls()
     if chosenflwnmbr != 'b' and chosenflwnmbr != 'p':
         
-        if int(chosenflwnmbr) < int(MaxLinks) + 1:
+        if int(chosenflwnmbr) < 20 + 1:
             
             chosentorrenttext =(namelist[int(chosenflwnmbr) - 1])
             chosentorrentpath = (torrentlinks[int(chosenflwnmbr) - 1])
         else:
     
-            return main(0,'','')
+            return main(0,'','','')
     
     elif chosenflwnmbr == 'p':
         cls()
         print('Type the page number you want')
         page = input()
-        main(page,textinput,SearchCategory)
+        main(page,textinput,SearchCategory,SortOrder)
     else:
-        main(0,'','')
+        main(0,'','','')
     
     buildedlink = ('https://www.1377x.to'+ chosentorrentpath)
     print(buildedlink)
@@ -149,7 +188,7 @@ def main(pagenum,oldreq,oldcat):
         print('This is the magnet link: \n'+magnetlink[0]+'\n\npress enter to return to main screen' )
         ghostedinput = input()
     cls()  
-    main(0,'','')  
+    main(0,'','','')  
     
-main(0,'','')
+main(0,'','','')
 
