@@ -12,25 +12,61 @@ MaxLinks = 20
 cboardsetting = gl(condir, 2).strip()
 
 
+
+
+
+
+
 def cls():                                         
     os.system('cls' if os.name=='nt' else 'clear')  
     
-def main(pagenum,oldreq):
+def main(pagenum,oldreq,oldcat):
     Domain = gl(condir, 1)
     cls()
     if len(oldreq) ==0:
         print('Please enter the text to search for\n')
         textinput = input()
-        
     else:
         textinput = oldreq
-    if int(pagenum) > 0:
-        BuildedReqLink = 'https://'+Domain+'/sort-search/'+textinput+'/seeders/desc/'+pagenum+'/'
+    if len(oldcat) ==0:
+        cls()
+        print('Please enter the category to search in\n')
+        print('[1] Movies')
+        print('[2] Games')
+        print('[3] Applications')
+        print('[4] Music')
+        print('[5] Documenteries')
+        print('[6] Anime')
+        print('[7] Wildcard')
+        CatNumber = input('\n')
+        Cats = ['movies','games','apps','music','documentaries','anime','']
+        if CatNumber != '7':
+            SearchCategory = Cats[int(CatNumber)-1]
+        else:
+            SearchCategory = 'Wild'
     else:
-        BuildedReqLink = 'https://www.1377x.to/sort-search/'+textinput+'/seeders/desc/1/'
+        
+        SearchCategory = oldcat
+        
+    
+    if int(pagenum) > 0:  
+        if SearchCategory != 'Wild':
+            BuildedReqLink = 'https://'+Domain+'/category-search/'+textinput+'/'+SearchCategory+'/'+pagenum+'/'
+            #OLD  'https://'+Domain+'/sort-search/'+textinput+'/seeders/desc/'+pagenum+'/'
+        else:
+            BuildedReqLink = 'https://'+Domain+'/sort-search/'+textinput+'/seeders/desc/'+pagenum+'/'            
+        
+    else:
+        if SearchCategory != 'Wild':
+            BuildedReqLink = 'https://'+Domain+'/category-search/'+textinput+'/'+SearchCategory+'/1/'
+        else:
+            BuildedReqLink = 'https://www.1377x.to/sort-search/'+textinput+'/seeders/desc/1/'
+        
+        
     
     
-    page = requests.get(BuildedReqLink) # Getting page HTML through request
+    page = requests.get(BuildedReqLink,verify=False) # Getting page HTML through request
+    
     soup = BeautifulSoup(page.content, 'html.parser') # Parsing content using beautifulsoup
     
     Names = soup.select("table tbody tr td.coll-1.name a") # Selecting all of the anchors with titles
@@ -84,7 +120,7 @@ def main(pagenum,oldreq):
         cls()
         print('Type the page number you want')
         page = input()
-        main(page,textinput)
+        main(page,textinput,SearchCategory)
     else:
         main(0,'')
     
@@ -115,5 +151,5 @@ def main(pagenum,oldreq):
     cls()  
     main(0,'')  
     
-main(0,'')
+main(0,'','')
 
