@@ -21,7 +21,7 @@ def cls():
     os.system('cls' if os.name=='nt' else 'clear')  
     
 def main(pagenum,oldreq,oldcat):
-    Domain = gl(condir, 1)
+    Domain = gl(condir, 1).strip()
     cls()
     if len(oldreq) ==0:
         print('Please enter the text to search for\n')
@@ -39,7 +39,7 @@ def main(pagenum,oldreq,oldcat):
         print('[6] Anime')
         print('[7] Wildcard')
         CatNumber = input('\n')
-        Cats = ['movies','games','apps','music','documentaries','anime','']
+        Cats = ['movies','games','apps','music','documentaries','anime']
         if CatNumber != '7':
             SearchCategory = Cats[int(CatNumber)-1]
         else:
@@ -51,7 +51,7 @@ def main(pagenum,oldreq,oldcat):
     
     if int(pagenum) > 0:  
         if SearchCategory != 'Wild':
-            BuildedReqLink = 'https://'+Domain+'/category-search/'+textinput+'/'+SearchCategory+'/'+pagenum+'/'
+            BuildedReqLink = 'https://'+str(Domain)+'/category-search/'+str(textinput)+'/'+str(SearchCategory)+'/'+str(pagenum)+'/'
             #OLD  'https://'+Domain+'/sort-search/'+textinput+'/seeders/desc/'+pagenum+'/'
         else:
             BuildedReqLink = 'https://'+Domain+'/sort-search/'+textinput+'/seeders/desc/'+pagenum+'/'            
@@ -60,12 +60,12 @@ def main(pagenum,oldreq,oldcat):
         if SearchCategory != 'Wild':
             BuildedReqLink = 'https://'+Domain+'/category-search/'+textinput+'/'+SearchCategory+'/1/'
         else:
-            BuildedReqLink = 'https://www.1377x.to/sort-search/'+textinput+'/seeders/desc/1/'
+            BuildedReqLink = 'https:/'+Domain+'/sort-search/'+textinput+'/seeders/desc/1/'
         
         
     
     
-    page = requests.get(BuildedReqLink,verify=False) # Getting page HTML through request
+    page = requests.get(BuildedReqLink.strip()) # Getting page HTML through request
     
     soup = BeautifulSoup(page.content, 'html.parser') # Parsing content using beautifulsoup
     
@@ -114,7 +114,7 @@ def main(pagenum,oldreq,oldcat):
             chosentorrentpath = (torrentlinks[int(chosenflwnmbr) - 1])
         else:
     
-            return main(0,'')
+            return main(0,'','')
     
     elif chosenflwnmbr == 'p':
         cls()
@@ -122,7 +122,7 @@ def main(pagenum,oldreq,oldcat):
         page = input()
         main(page,textinput,SearchCategory)
     else:
-        main(0,'')
+        main(0,'','')
     
     buildedlink = ('https://www.1377x.to'+ chosentorrentpath)
     print(buildedlink)
@@ -149,7 +149,7 @@ def main(pagenum,oldreq,oldcat):
         print('This is the magnet link: \n'+magnetlink[0]+'\n\npress enter to return to main screen' )
         ghostedinput = input()
     cls()  
-    main(0,'')  
+    main(0,'','')  
     
 main(0,'','')
 
