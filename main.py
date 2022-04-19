@@ -1,4 +1,4 @@
-import pyperclip , requests , os , termcolor 
+import pyperclip , requests , os , termcolor , base64
 from bs4 import BeautifulSoup ; from time import sleep ; from linecache import getline as gl
 
 curdir = os.getcwd()
@@ -11,8 +11,14 @@ def cls():
     os.system('cls' if os.name=='nt' else 'clear')  
     
 def main(pagenum,oldreq,oldcat,oldorder):
-    Domain = gl(condir, 1).strip()
+    
+    Domainencoded = gl(condir, 1).strip()
     cls()
+    encutf = Domainencoded.encode("UTF-8")
+    
+    decced = base64.b64decode(encutf)
+    
+    finaldecoded = decced.decode("UTF-8")
     
     if len(str(pagenum)) == 0:
         pagenum = 1
@@ -63,10 +69,10 @@ def main(pagenum,oldreq,oldcat,oldorder):
          SortOrder = oldorder
         
     if SearchCategory != 'Wild':   
-        BuildedReqLink = 'https://'+str(Domain)+'/sort-category-search/'+str(textinput)+'/'+str(SearchCategory)+'/'+str(SortOrder)+'/desc/'+str(pagenum)+'/'
+        BuildedReqLink = 'https://'+str(finaldecoded)+'/sort-category-search/'+str(textinput)+'/'+str(SearchCategory)+'/'+str(SortOrder)+'/desc/'+str(pagenum)+'/'
             
     else:
-        BuildedReqLink = 'https://'+str(Domain)+'/sort-search/'+str(textinput)+'/'+str(SortOrder)+'/'+'desc/'+str(pagenum)+'/'
+        BuildedReqLink = 'https://'+str(finaldecoded)+'/sort-search/'+str(textinput)+'/'+str(SortOrder)+'/'+'desc/'+str(pagenum)+'/'
             
     page = requests.get(BuildedReqLink) # Getting page HTML through request
     
