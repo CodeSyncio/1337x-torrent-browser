@@ -1,4 +1,4 @@
-import pyperclip , requests , os , termcolor , base64
+import requests , os , termcolor , base64
 from bs4 import BeautifulSoup ; from time import sleep ; from linecache import getline as gl
 
 curdir = os.getcwd()
@@ -6,6 +6,7 @@ condir =curdir+'/configs/config.txt'
 SleepTime = 2
 MaxLinks = 20
 cboardsetting = gl(condir, 2).strip()
+qbitdownloadingsetting = gl(condir, 3).strip()
 
 def cls():                                         
     os.system('cls' if os.name=='nt' else 'clear')  
@@ -15,9 +16,7 @@ def main(pagenum,oldreq,oldcat,oldorder):
     Domainencoded = gl(condir, 1).strip()
     cls()
     encutf = Domainencoded.encode("UTF-8")
-    
     decced = base64.b64decode(encutf)
-    
     finaldecoded = decced.decode("UTF-8")
     
     if len(str(pagenum)) == 0:
@@ -134,7 +133,8 @@ def main(pagenum,oldreq,oldcat,oldorder):
         if int(chosenflwnmbr) < 20 + 1:
             chosentorrenttext =(namelist[int(chosenflwnmbr) - 1])
             chosentorrentpath = (torrentlinks[int(chosenflwnmbr) - 1])
-        
+            
+            
         else:
             return main(0,'','','')
     
@@ -158,9 +158,22 @@ def main(pagenum,oldreq,oldcat,oldorder):
         magnetunfiltered.append(link.get('href'))
 
     magnetlink = [x for x in magnetunfiltered if x.startswith('magnet')]
+    
+    if qbitdownloadingsetting == 'True':
+        from qbittorrent import Client
+        qb = Client('http://127.0.0.1:8080/')
 
+        qb.login()
+            
+        qb.download_from_link(magnetlink)
+        
+        print ('Qbittorrent has started downloading the chosen link, open the client to see progress...')
+        sleep(3)
+    else:
+        pass
     cls()
     if cboardsetting == 'True':
+        import pyperclip
         pyperclip.copy(magnetlink[0])
         print('The magnet link has been copied to your clipboard, returning to torrent chooser in ' +str(SleepTime)+ ' seconds' )
         sleep(int(SleepTime))

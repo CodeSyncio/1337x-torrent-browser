@@ -1,6 +1,8 @@
 d3d3LjEzMzd4eC50bw==
 True
+True
 
 
 line 1 = domain used for GET requests (can use any official domain, encoded.)
 line 2 = enable or disable copying to clipboard (True or False)
+line 3 = enable or disable downloading the torrent with qbittorrent (True or False)
